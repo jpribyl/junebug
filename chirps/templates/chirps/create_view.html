@@ -1,1 +1,5 @@
-{% include "chirps/form.html" with form=form btn_title='Chirp' %}
+{% extends  "base.html" %}
+{% block title %} {{block.super}} | create chirp {% endblock title %}
+{% block content %}
+    {% include "chirps/form.html" with form=form btn_title='Chirp' %}
+{% endblock content %}

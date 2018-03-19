@@ -2,6 +2,13 @@ from django import forms
 from .models import Chirp
 
 class ChirpModelForm(forms.ModelForm):
+
+    content = forms.CharField(
+        label='', 
+        widget=forms.Textarea(
+            attrs={'placeholder': "your chirp goes here", 
+                   "class": "form-control"}))
+
     class Meta:
         model = Chirp 
         fields = [

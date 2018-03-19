@@ -3,6 +3,7 @@ from django.shortcuts import render, get_object_or_404
 from django.forms.utils import ErrorList
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
+from django.db.models import Q
 
 from django.views.generic import (
     DetailView,
@@ -33,7 +34,7 @@ from .mixins import FormUserNeededMixin, UserOwnerMixin
 class ChirpCreateView(LoginRequiredMixin, FormUserNeededMixin, CreateView):
     form_class = ChirpModelForm
     template_name = 'chirps/create_view.html'
-    success_url = "/chirp/create/"
+    # success_url = "/chirp/create/"
     login_url = '/admin'
 
 
@@ -60,11 +61,25 @@ class ChirpDetailView(DetailView):
 class ChirpListView(ListView):
     # you could also use the default at chirps/chirp_list.html
     template_name = "chirps/list_view.html"
-    queryset = Chirp.objects.all()
+
+    def get_queryset(self, *args, **kwargs):
+        qs = Chirp.objects.all()
+
+        # q is the input to the search box from search_form.html
+        query = self.request.GET.get("q", None)
+        if query is not None:
+            # filter based on it
+            qs = qs.filter(
+                Q(content__icontains=query) |
+                Q(user__username__icontains=query))
+
+        return qs
 
     def get_context_data(self, *args, **kwargs):
         context = super(ChirpListView, self).get_context_data(*args, **kwargs)
         print(context)
+        context['create_form'] = ChirpModelForm()
+        context['create_url'] = reverse_lazy('create')
 
         return(context)
 
@@ -79,7 +94,9 @@ class ChirpUpdateView(LoginRequiredMixin, UserOwnerMixin, UpdateView):
 
     form_class = ChirpModelForm
     template_name = 'chirps/update_view.html'
-    success_url = "/chirp/"
+
+    # uncomment this to show list of chirps instead of updated chirp
+    # success_url = "/chirp/"
 
 
 #########################
@@ -89,7 +106,7 @@ class ChirpUpdateView(LoginRequiredMixin, UserOwnerMixin, UpdateView):
 class ChirpDeleteView(LoginRequiredMixin, DeleteView):
     model = Chirp
     template_name = 'chirps/delete_confirm.html'
-    success_url = reverse_lazy("home")
+    success_url = reverse_lazy("list")
 
 
 

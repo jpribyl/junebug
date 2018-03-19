@@ -19,10 +19,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls import include
 from .views import home
+from chirps.views import ChirpListView
 
 urlpatterns = [
     path('admin/', admin.site.urls), # /admin
-    path('', home, name='home'), # /
+    path('', ChirpListView.as_view(), name='home'), # /
 
     # include the chirps app
     path('chirp/', include('chirps.urls')), # /chirp/

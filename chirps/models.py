@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.urls import reverse
 
 # Create your models here.
 
@@ -22,6 +23,10 @@ class Chirp(models.Model):
 
     def __str__(self):
         return str(self.content)
+
+    # success_url will override this
+    def get_absolute_url(self):
+        return reverse("detail", kwargs={"pk":self.pk})
 
     # a second way to do validations inside the model
     # def clean(self, *args, **kwargs):

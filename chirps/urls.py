@@ -1,5 +1,6 @@
 from django.urls import path, re_path
 from django.conf.urls import url
+from django.views.generic.base import RedirectView
 
 from .views import *
 
@@ -10,7 +11,8 @@ urlpatterns = [
     # path('1', chirp_detail_view, name='list')
 
     # using the pre-made django views
-    path('', ChirpListView.as_view(), name='list'), # /chirp/
+    path('', RedirectView.as_view(url='/')), # /chirp/search
+    path('search/', ChirpListView.as_view(), name='list'), # /chirp/search
     path('create/', ChirpCreateView.as_view(), name='create'), # /chirp/create/
 
     # children need to be higher than parents
