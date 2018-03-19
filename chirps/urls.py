@@ -1,8 +1,6 @@
-from django.contrib import admin
 from django.urls import path, re_path
-from django.conf import settings
 from django.conf.urls import url
-from django.conf.urls.static import static
+
 from .views import *
 
 urlpatterns = [
@@ -13,5 +11,10 @@ urlpatterns = [
 
     # using the pre-made django views
     path('', ChirpListView.as_view(), name='list'), # /chirp/
-    re_path(r'(?P<pk>\d+)/', ChirpDetailView.as_view(), name='detail') # /chirp/id/
+    path('create/', ChirpCreateView.as_view(), name='create'), # /chirp/create/
+
+    # children need to be higher than parents
+    re_path(r'(?P<pk>\d+)/update', ChirpUpdateView.as_view(), name='update'), # /chirp/id/update/
+    re_path(r'(?P<pk>\d+)/delete', ChirpDeleteView.as_view(), name='delete'), # /chirp/id/delete/
+    re_path(r'(?P<pk>\d+)/', ChirpDetailView.as_view(), name='detail'), # /chirp/id/
 ]

@@ -5,17 +5,19 @@ class ChirpModelForm(forms.ModelForm):
     class Meta:
         model = Chirp 
         fields = [
-            "user",
+            # "user",
             "content"
         ]
         # exclude = ["user"]
 
-    # put the field name after clean for validations
+    # validations may be in the form, or the model, or in their own module
     # see docs for more info
-    def clean_content(self, *args, **kwargs):
-        content = self.cleaned_data.get("content")
 
-        if content == "abc":
-            raise forms.ValidationError("Cannot be abc")
+    # put the field name after clean for validations
+    # def clean_content(self, *args, **kwargs):
+        # content = self.cleaned_data.get("content")
 
-        return content
+        # if content == "abc":
+            # raise forms.ValidationError("Cannot be abc")
+
+        # return content
