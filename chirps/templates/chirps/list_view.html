@@ -1,0 +1,10 @@
+{% for obj in object_list %}
+    <p>{{obj.content}}</br>
+    {{obj.user}}<br>
+    {{obj.timestamp}}<br>
+    {{obj.timestamp | timesince}}</p>
+    
+{% empty %}
+    <p>No chirps yet.</p>
+
+{% endfor %}
