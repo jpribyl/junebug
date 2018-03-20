@@ -147,3 +147,6 @@ STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), "static-serve")
 
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
+# Activate Django-Heroku.
+django_heroku.settings(locals())
