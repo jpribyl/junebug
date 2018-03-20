@@ -25,8 +25,12 @@ urlpatterns = [
     path('admin/', admin.site.urls), # /admin
     path('', ChirpListView.as_view(), name='home'), # /
 
+    # include the accounts app
+    path('profiles', include('accounts.urls')), # /chirp/
+
     # include the chirps app
     path('chirp/', include('chirps.urls')), # /chirp/
+    path('api/chirp/', include('chirps.api.urls')), # /api/chirp/
 ]
 
 if settings.DEBUG:

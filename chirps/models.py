@@ -28,6 +28,14 @@ class Chirp(models.Model):
     def get_absolute_url(self):
         return reverse("detail", kwargs={"pk":self.pk})
 
+
+    # a second way to order by the reverse of the timestamp
+    class Meta:
+        ordering = ['-timestamp', 'content']
+    # you could also do it with something called a model manager
+
+
+
     # a second way to do validations inside the model
     # def clean(self, *args, **kwargs):
         # content = self.content

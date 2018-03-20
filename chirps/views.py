@@ -4,6 +4,7 @@ from django.forms.utils import ErrorList
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.db.models import Q
+from django.contrib.auth.models import User
 
 from django.views.generic import (
     DetailView,
@@ -80,6 +81,7 @@ class ChirpListView(ListView):
         print(context)
         context['create_form'] = ChirpModelForm()
         context['create_url'] = reverse_lazy('create')
+        context['user_list'] = User.objects.all()
 
         return(context)
 

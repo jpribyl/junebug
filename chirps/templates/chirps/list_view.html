@@ -1,51 +1,194 @@
 {% extends "base.html" %}
 
+<style>
+#chirp-container {
+
+}
+</style>
+
+{% block script %}
+<script>
+
+function getParameterByName(name, url) {
+    if (!url) {
+      url = window.location.href;
+    }
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
+
+
+
+$(document).ready(function(){
+  var query = getParameterByName('q')
+  var chirpList = [];
+
+    
+  
+  function attachChirp(chirpValue, prepend){
+          var chirpContent = chirpValue.content;
+          var chirpUser = chirpValue.user;
+          var dateDisplay = chirpValue.date_display;
+          var chirpHTMLFormatted = 
+              "<div class=\"media\"><div class=\"media-body\">" + 
+              chirpContent + 
+              "<br/> via " + 
+              "<a href= '" + chirpUser.url + "'>" +
+              chirpUser.username + 
+              "</a>" +
+              " | " + 
+              dateDisplay + 
+              " | " + 
+              "<a href='#'>View</a>" + 
+              "</div></div><hr/>"
+        
+
+          if (prepend==true){
+              $("#chirp-container").prepend(chirpHTMLFormatted)
+          } else{
+              $("#chirp-container").append(chirpHTMLFormatted)
+          }
+            
+  }
+
+
+  function parseChirps(){
+    if (chirpList == 0) {
+      $("#chirp-container").text("No chirps currently found.")
+    } else {
+      // chirps exist, parse & display them
+     $.each(chirpList, function(key, value){
+         var chirpKey = key;
+         attachChirp(value)
+      })
+    }
+  }
+
+
+  function fetchChirps(){
+    console.log("fetching..")
+    $.ajax({
+      url: "/api/chirp/",
+      data: {
+        "q": query
+      },
+      method: "GET",
+      success: function(data){
+        chirpList = data
+        parseChirps()
+       
+      },
+      error: function(data){
+        console.log("error")
+        console.log(data)
+      }
+    })
+  }
+
+  fetchChirps()
+  
+  <!--monitor the number of characters-->
+  var charsStart = 140;
+  var charsCurrent = 0;
+  $("#chirp-form").append("<span id='chirpCharsLeft'>140</span>")
+
+  <!--update on every key-up-->
+  $("#chirp-form textarea").keyup(function(event){
+      var chirpValue = $(this).val()
+      var chirpCharsLeft = $("#chirpCharsLeft")
+
+      charsCurrent = charsStart - chirpValue.length
+      chirpCharsLeft.text(charsCurrent)
+
+      if (charsCurrent > 0){
+          <!--remove classes-->
+          chirpCharsLeft.removeClass("grey-color")
+          chirpCharsLeft.removeClass("red-color")
+      } else if (charsCurrent == 0) {
+          <!--add grey class-->
+          chirpCharsLeft.removeClass("red-color")
+          chirpCharsLeft.addClass("grey-color")
+      } else if (charsCurrent < 0) {
+          <!--add red class-->
+          chirpCharsLeft.removeClass("grey-color")
+          chirpCharsLeft.addClass("red-color")
+      }
+
+  })
+
+
+  $("#chirp-form").submit(function(event){
+      event.preventDefault()
+      var this_ = $(this)
+      var formData =  this_.serialize()
+
+      if (charsCurrent >= 0){$.ajax({
+                  url: "/api/chirp/create/",
+                  data: formData,
+                  method: "POST",
+
+                  success: function(data){
+                      console.log(data)
+                      this_.find("input[type=text], textarea").val("")
+                      attachChirp(data, true)
+                  },
+
+                  error: function(data){
+                      console.log("error")
+                      console.log(data.statusText)
+                      console.log(data.status)
+                  }
+      })} else {
+        console.log("cannot send, tweet too long")
+      }
+  })
+
+
+
+
+
+});
+</script>
+{% endblock script %}
+
+
 
 {% block content %}
-    {% if not request.GET.q %}
-        <div class=''>
-            
-            {% include "chirps/form.html" with form=create_form action_url=create_url btn_title='Chirp' %}
 
-        </div>
-
-        <hr/>
-    {% endif %}
    
-    {% for object in object_list %}
     <div class='row'>
-        <div class='col-sm-3' style='background-color:yellow;'>
-            <h2>{{ object.user }}</h2>
+        <div class='col-sm-3 col-xs-12' >
+                <h1>@{{ request.user }}</h1>
+
+            {% for user in user_list %}
+                    <a href="/profiles/{{ user }}/">{{ user }}</a><br>
+            {% endfor %}
+
         </div>
-        <!--<div class='col-sm-9 '>-->
-                <div class="media">
-                      <div class="media-left">
-                        <a href="#">
-                          {% if object.image %}
-                            <img class="media-object" src="..." alt="...">
-                         {% endif %}
-                        </a>
-                      </div>
-                      <div class="media-body">
-                        {{ object.content }}<br/>
-                        via {{ object.user }} | {{ object.timestamp|timesince }} ago | <a href='{{ object.get_absolute_url }}'>View</a>
-                      </div>
+
+
+        <div class='col-sm-9 '>
+             {% if not request.GET.q %}
+                <div class=''>
+                    
+                    {% include "chirps/form.html" with form=create_form action_url=create_url btn_title='Chirp' form_id='chirp-form' %}
+
                 </div>
-            <!--</div>-->
-    </div>
-
-
-
-            <hr/>
-
-        {% empty %}
-            {% if request.GET.q %}
-             <p>No chirps found.</p>
-            {% else %}
-            <p>No chirps yet.</p>
+                <hr/>
             {% endif %}
 
-        </div>
+          <div id='chirp-container'>
 
-{% endfor %}
+
+          </div>
+
+
+        </div>
+    </div>
+
 {% endblock content %}
