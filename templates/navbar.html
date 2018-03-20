@@ -16,21 +16,33 @@
     </div>
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav navbar-right">
-        <li><a href="#">Link</a></li>
-        <li class="dropdown">
 
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+        {% if request.user.is_authenticated %}
+        <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
 
-          <ul class="dropdown-menu">
-            <li><a href="#">Action</a></li>
-            <li><a href="#">Another action</a></li>
-            <li><a href="#">Something else here</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="#">Separated link</a></li>
-          </ul>
-        </li>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                  role="button" aria-haspopup="true"
+                  aria-expanded="false">Account <span class="caret"></span></a>
+
+              <ul class="dropdown-menu">
+                  <li><a href="/profiles/{{ request.user }}/">Profile</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+              </ul>
+            </li>
       </ul>
+
+
+      {% else %}
+      <ul class="nav navbar-nav navbar-right">
+          <li><a href="{% url 'login' %}">Login</a></li>
+          <li role="separator" class="divider"></li>
+          <li><a href="{% url 'register' %}">Register</a></li>
+      </ul>
+
+      {% endif %}
+
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>

@@ -59,7 +59,7 @@ class ChirpDetailView(DetailView):
         return obj
 
 
-class ChirpListView(ListView):
+class ChirpListView(LoginRequiredMixin, ListView):
     # you could also use the default at chirps/chirp_list.html
     template_name = "chirps/list_view.html"
 

@@ -14,6 +14,7 @@ class ChirpModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chirp
         fields = [
+            'id',
             'user',
             'content',
             'timestamp',

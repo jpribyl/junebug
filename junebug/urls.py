@@ -20,13 +20,24 @@ from django.conf.urls.static import static
 from django.conf.urls import include
 from .views import home
 from chirps.views import ChirpListView
+from accounts.views import UserRegisterView
 
 urlpatterns = [
     path('admin/', admin.site.urls), # /admin
     path('', ChirpListView.as_view(), name='home'), # /
 
+
+    # include authentication
+    path('', include('django.contrib.auth.urls')),
+
+
+    # include registration
+    path('register/', UserRegisterView.as_view(), name='register'),
+
+
     # include the accounts app
-    path('profiles', include('accounts.urls')), # /chirp/
+    path('profiles/', include('accounts.urls')), # /chirp/
+
 
     # include the chirps app
     path('chirp/', include('chirps.urls')), # /chirp/

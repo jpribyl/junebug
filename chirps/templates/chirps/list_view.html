@@ -34,6 +34,7 @@ $(document).ready(function(){
           var chirpContent = chirpValue.content;
           var chirpUser = chirpValue.user;
           var dateDisplay = chirpValue.date_display;
+          var chirpID = chirpValue.id;
           var chirpHTMLFormatted = 
               "<div class=\"media\"><div class=\"media-body\">" + 
               chirpContent + 
@@ -44,7 +45,7 @@ $(document).ready(function(){
               " | " + 
               dateDisplay + 
               " | " + 
-              "<a href='#'>View</a>" + 
+              "<a href='/chirp/" + chirpID + "'>View</a>" + 
               "</div></div><hr/>"
         
 
